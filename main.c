@@ -10,7 +10,7 @@ void flushBuffer(void) {
 
 
 int main(void) {
-    char input[999];
+    char input[1000];
     char oper;
     long double num1, num2, result;
 
