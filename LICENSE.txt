@@ -2,7 +2,6 @@ Polecat's Very Original License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated document files (the "Software"),
 to do whatever the **** you want and I can't say anything about it. The software is provided "AS IS" without warranty of any kind, meaning
-if this deletes your system files dont blame me bro. Also its a (PROJECT TYPE) (Alternative if it can delete syem files: 'wait it actually can delete system files').
-In no event will you, like, sue me or anything. Im a child.
+if this deletes your system files dont blame me bro. Also its a calculator. In no event will you, like, sue me or anything. Im a child.
 
 Thank you for reading my new and shiny license every open source project should totally use from now on, frfr.
