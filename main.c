@@ -67,7 +67,9 @@ int main(void) {
                     printf("Division by zero error!\n\n");
                     continue;
                 }
-            default: printf("Something has gone dearly wrong."); continue;
+                result = num1/num2;
+                break;
+            default: printf("Something has gone dearly wrong.\n"); continue;
         }
 
         printf("Result: %.*Lg\n\n", LDBL_DIG, result);
