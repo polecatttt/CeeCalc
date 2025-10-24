@@ -7,4 +7,8 @@ ehthumbs.db
 Thumbs.db
 
 crun_prefs.json
-main
+.vscode/
+bin/
+dist/
+TODO.c
+Makefile
