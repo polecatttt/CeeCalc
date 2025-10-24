@@ -4,6 +4,7 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
+#include "math_utils.h"
 
 #define VERSION "5.1.0"
 
@@ -61,7 +62,8 @@ int main(int argc, char **argv) {
     // used for input and calculations
     char input[1000];
     char *oper;
-    long double num1, num2, result;
+    long double num1, num2;
+    Result r;
 
     // operations that take 1 arg
     static const char operOneArgs[3][10] = {
@@ -186,32 +188,35 @@ int main(int argc, char **argv) {
         // calculation
 
         // 1 arg
-        if (strcmp(oper, "add") == 0) { result = num1+num2; }
-        else if (strcmp(oper, "sub") == 0) { result = num1-num2; }
-        else if (strcmp(oper, "mul") == 0) { result = num1*num2; }
-        else if (strcmp(oper, "div") == 0) {
-            if (num2 == 0.0L) { printf("Division by zero error!\n\n"); continue; }
-            result = num1/num2;
-        }
+        if (strcmp(oper, "add") == 0) { r = add(num1, num2 ); }
+        else if (strcmp(oper, "sub") == 0) { r = sub(num1, num2 ); }
+        else if (strcmp(oper, "mul") == 0) { r = multiply(num1, num2 ); }
+        else if (strcmp(oper, "div") == 0) { r = divide(num1, num2 ); }
 
         // 2 arg
-        else if (strcmp(oper, "sin") == 0) { result = sinl(num1); }
-        else if (strcmp(oper, "cos") == 0) { result = cosl(num1); }
-        else if (strcmp(oper, "tan") == 0) { result = tanl(num1); }
+        else if (strcmp(oper, "sin") == 0) { r = sine(num1); }
+        else if (strcmp(oper, "cos") == 0) { r = cosine(num1); }
+        else if (strcmp(oper, "tan") == 0) { r = tangent(num1); }
 
         // default
         else { printf("Something has gone dearly wrong.\n\n"); continue; }
 
 
+        // Validate result
+        if (!r.code) {
+            printf("Error: %s\n\n", r.msg);
+            continue;
+        }
+
         // check if result overflowed
-        if (!isfinite(result)) {
+        if (!isfinite(r.value)) {
             printf("Overflow error: calculation too large to compute\n\n");
             continue;
         }
 
         // Finally, results!s
         printf("%s%.*Lg\n\n",
-            verbose ? "Result: " : "", LDBL_DIG, result);
+            verbose ? "Result: " : "", LDBL_DIG, r.value);
         continue;
 
     }
