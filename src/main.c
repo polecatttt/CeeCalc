@@ -38,41 +38,16 @@ int main(int argc, char **argv) {
         printf("Verbose mode enabled.\n");
     }
 
-    // used for input and calculations
+    // variables
     char input[1000];
     char *oper;
-    long double num1, num2;
     Result r;
-
-    // operations that take 1 arg
-    static const char operOneArgs[3][10] = {
-        "sin",
-        "cos",
-        "tan"
-    };
-
-    // operations that take 2 ars
-    static const char operTwoArgs[4][10] = {
-        "add",
-        "sub",
-        "mul",
-        "div",
-    };
-
-    // size of above arrays
-    static const int oneArgSize = sizeof(operOneArgs) / sizeof(operOneArgs[0]);
-    static const int twoArgSize = sizeof(operTwoArgs) / sizeof(operTwoArgs[0]);
-
-    // used to check which type of operation it should be at the validity check
-    int expectedType;   // 0=invalid, 1=one arg, 2=two arg
 
     // now for the actual thingy!
     printf("C Calculator v%s\n", VERSION);
     printf("'help' for help!\n\n");
 
     while(1) {
-
-        expectedType = 0;
 
         // user input
         printf("> ");
