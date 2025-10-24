@@ -1,33 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <float.h>
 #include <math.h>
+
+#include "main_utils.h"
 #include "math_utils.h"
-
-#define VERSION "5.1.0"
-
-
-void flushBuffer(void) {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
-
-
-void help(void) {
-    printf("== C Calculator %s ==\n\n", VERSION);
-    printf("Add - add <num1> <num2>\n");
-    printf("Subtract - sub <num1> <num2>\n");
-    printf("Multiply - mul <num1> <num2>\n");
-    printf("Divide - div <num1> <num2>\n");
-    printf("Sine - sin <num>\n");
-    printf("Cosine - cos <num>\n");
-    printf("Tangent - tan <num>\n");
-    printf("q - quit - but why tho :(\n\n");
-    printf("== Flags ==\n");
-    printf("Verbose (-v) prints extra output for debugging\n");
-}
+#include "calculator.h"
 
 
 int main(int argc, char **argv) {
@@ -73,12 +52,11 @@ int main(int argc, char **argv) {
     };
 
     // operations that take 2 ars
-    static const char operTwoArgs[5][10] = {
+    static const char operTwoArgs[4][10] = {
         "add",
         "sub",
         "mul",
         "div",
-        "intdiv",
     };
 
     // size of above arrays
@@ -122,84 +100,14 @@ int main(int argc, char **argv) {
             help(); printf("\n"); continue; 
         }
 
-        // tokenize expression
-        char *token = strtok(input, " ");
-        char *tokensArr[4];
-        int nTokens = 0;
+        // parse expression and compute
+        long double args[2];
+        int nArgs;
+        
+        opType type = parseExpr(input, &oper, args, &nArgs, verbose);
+        if (type == INVALID) { printf("Invalid!\n\n"); continue; }
 
-        while (token && nTokens < 4) {
-            tokensArr[nTokens] = token;
-            if (verbose) printf("Token %d = %s\n", nTokens, tokensArr[nTokens]);
-            nTokens += 1;
-            token = strtok(NULL, " ");
-        }
-
-        // oper validation
-        oper = tokensArr[0];
-
-        for (int i=0; i < oneArgSize; i+=1) {
-            if (strcmp(oper, operOneArgs[i]) == 0) {
-                expectedType = 1;
-                if (verbose) printf("Expected type 1\n");
-                break;
-            }
-        }
-
-        for (int i=0; i < twoArgSize; i+=1) {
-            if (strcmp(oper, operTwoArgs[i]) == 0) {
-                expectedType = 2;
-                if (verbose) printf("Expected type 2\n");
-                break;
-            }
-        }
-
-        if (expectedType == 0) {
-            printf("Invalid Operator!\n\n");
-            if (verbose) printf("Expected type %d, nTokens %d\n\n", expectedType, nTokens);
-            continue;
-        }
-
-        // check size, args, etc.
-        if ((expectedType == 1 && nTokens != 2) || (expectedType == 2 && nTokens != 3)) {
-            if (verbose) printf("Expected type %d, nTokens %d\n\n", expectedType, nTokens);
-            printf("Operation %s requires %d argument%s\n\n",
-            oper, expectedType, expectedType == 1 ? " " : "s");
-            continue;
-        }
-
-        // convert the args to numbers
-        char *end;
-
-        num1 = strtold(tokensArr[1], &end);
-        if (end == tokensArr[1] || *end != '\0') {
-            printf("Invalid number: %s\n\n", tokensArr[1]);
-            continue;
-        }
-
-        if (expectedType == 2) {
-            num2 = strtold(tokensArr[2], &end);
-            if (end == tokensArr[2] || *end != '\0') {
-                printf("Invalid number: %s\n\n", tokensArr[2]);
-                continue;
-            }
-        }
-
-
-        // calculation
-
-        // 1 arg
-        if (strcmp(oper, "add") == 0) { r = add(num1, num2 ); }
-        else if (strcmp(oper, "sub") == 0) { r = sub(num1, num2 ); }
-        else if (strcmp(oper, "mul") == 0) { r = multiply(num1, num2 ); }
-        else if (strcmp(oper, "div") == 0) { r = divide(num1, num2 ); }
-
-        // 2 arg
-        else if (strcmp(oper, "sin") == 0) { r = sine(num1); }
-        else if (strcmp(oper, "cos") == 0) { r = cosine(num1); }
-        else if (strcmp(oper, "tan") == 0) { r = tangent(num1); }
-
-        // default
-        else { printf("Something has gone dearly wrong.\n\n"); continue; }
+        Result r = compute(oper, args, nArgs);
 
 
         // Validate result
