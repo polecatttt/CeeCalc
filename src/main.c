@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <float.h>
 #include <math.h>
+
+#define VERSION "5.1.0"
 
 
 void flushBuffer(void) {
@@ -12,7 +15,7 @@ void flushBuffer(void) {
 
 
 void help(void) {
-    printf("== C Calculator v5.0 ==\n\n");
+    printf("== C Calculator %s ==\n\n", VERSION);
     printf("Add - add <num1> <num2>\n");
     printf("Subtract - sub <num1> <num2>\n");
     printf("Multiply - mul <num1> <num2>\n");
@@ -20,10 +23,40 @@ void help(void) {
     printf("Sine - sin <num>\n");
     printf("Cosine - cos <num>\n");
     printf("Tangent - tan <num>\n");
+    printf("q - quit - but why tho :(\n\n");
+    printf("== Flags ==\n");
+    printf("Verbose (-v) prints extra output for debugging\n");
 }
 
 
-int main(void) {
+int main(int argc, char **argv) {
+
+    // argument parsing
+    opterr = 0;  // disable automatic error messages
+    int verbose = 0;
+    int opt;
+
+    while ((opt = getopt(argc, argv, "v")) != -1) {
+        switch (opt) {
+
+            case 'v':
+                verbose = 1;
+                break;
+            
+            case '?':
+                fprintf(stderr, "Unknown option: -%c\n", optopt);
+                return 1;
+
+        }
+    }
+
+    for (int i=optind; i < argc; i+=1) {
+        printf("Option skipped: %s\n", argv[i]);
+    }
+
+    if (verbose) {
+        printf("Verbose mode enabled.\n");
+    }
 
     // used for input and calculations
     char input[1000];
@@ -54,7 +87,7 @@ int main(void) {
     int expectedType;   // 0=invalid, 1=one arg, 2=two arg
 
     // now for the actual thingy!
-    printf("C Calculator v5.0\n");
+    printf("C Calculator v%s\n", VERSION);
     printf("'help' for help!\n\n");
 
     while(1) {
@@ -77,8 +110,15 @@ int main(void) {
 
         // removing newline, checking if quit or help
         input[strcspn(input, "\n")] = '\0';
-        if (strcmp(input, "q") == 0) break;
-        if (strcmp(input, "help") == 0) { help(); printf("\n"); continue; }
+        if (strcmp(input, "q") == 0) {
+            if (verbose) printf("strcmp input, string 'q' passed\n");
+            break;
+        }
+
+        if (strcmp(input, "help") == 0) {
+            if (verbose) printf("strcmp input, string 'help' passed\n");
+            help(); printf("\n"); continue; 
+        }
 
         // tokenize expression
         char *token = strtok(input, " ");
@@ -87,6 +127,7 @@ int main(void) {
 
         while (token && nTokens < 4) {
             tokensArr[nTokens] = token;
+            if (verbose) printf("Token %d = %s\n", nTokens, tokensArr[nTokens]);
             nTokens += 1;
             token = strtok(NULL, " ");
         }
@@ -97,6 +138,7 @@ int main(void) {
         for (int i=0; i < oneArgSize; i+=1) {
             if (strcmp(oper, operOneArgs[i]) == 0) {
                 expectedType = 1;
+                if (verbose) printf("Expected type 1\n");
                 break;
             }
         }
@@ -104,17 +146,20 @@ int main(void) {
         for (int i=0; i < twoArgSize; i+=1) {
             if (strcmp(oper, operTwoArgs[i]) == 0) {
                 expectedType = 2;
+                if (verbose) printf("Expected type 2\n");
                 break;
             }
         }
 
         if (expectedType == 0) {
             printf("Invalid Operator!\n\n");
+            if (verbose) printf("Expected type %d, nTokens %d\n\n", expectedType, nTokens);
             continue;
         }
 
         // check size, args, etc.
         if ((expectedType == 1 && nTokens != 2) || (expectedType == 2 && nTokens != 3)) {
+            if (verbose) printf("Expected type %d, nTokens %d\n\n", expectedType, nTokens);
             printf("Operation %s requires %d argument%s\n\n",
             oper, expectedType, expectedType == 1 ? " " : "s");
             continue;
@@ -165,7 +210,8 @@ int main(void) {
         }
 
         // Finally, results!s
-        printf("%.*Lg\n\n", LDBL_DIG, result);
+        printf("%s%.*Lg\n\n",
+            verbose ? "Result: " : "", LDBL_DIG, result);
         continue;
 
     }
