@@ -11,5 +11,7 @@ crun_prefs.json
 .vscode/
 bin/
 dist/
+build/
 TODO.c
 Makefile
+build_info.txt
