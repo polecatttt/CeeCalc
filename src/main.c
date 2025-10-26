@@ -44,13 +44,15 @@ int main(int argc, char **argv, char **envp) {
     
 
     if (verbose) {
-        printf("Verbose mode enabled.\n\n");
+        printf("Verbose mode enabled.\n");
     }
 
     if ((env_sixseven) && (env_sixseven[0] == '1')) {
         sixseven = 1;
-        printf("You feel a terrible presence...\n\n");
+        printf("You feel a terrible presence...\n");
     }
+
+    printf("\n");
 
     // variables
     char input[1000];
