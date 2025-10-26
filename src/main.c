@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <float.h>
@@ -9,11 +10,16 @@
 #include "calculator.h"
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv, char **envp) {
+    // arguments and env vars
+    int verbose = 0;
+    
+    char *env_sixseven = getenv("SIXSEVEN");
+    int sixseven = 0;
+
 
     // argument parsing
     opterr = 0;  // disable automatic error messages
-    int verbose = 0;
     int opt;
 
     while ((opt = getopt(argc, argv, "v")) != -1) {
@@ -34,8 +40,16 @@ int main(int argc, char **argv) {
         printf("Option skipped: %s\n", argv[i]);
     }
 
+    // env var parsing
+    
+
     if (verbose) {
-        printf("Verbose mode enabled.\n");
+        printf("Verbose mode enabled.\n\n");
+    }
+
+    if ((env_sixseven) && (env_sixseven[0] == '1')) {
+        sixseven = 1;
+        printf("You feel a terrible presence...\n\n");
     }
 
     // variables
@@ -83,6 +97,7 @@ int main(int argc, char **argv) {
         if (type == INVALID) { printf("Invalid!\n\n"); continue; }
 
         Result r = compute(oper, args, nArgs);
+        if (sixseven) r.value = 67;
 
 
         // Validate result
