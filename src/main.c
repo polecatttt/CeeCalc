@@ -8,14 +8,18 @@
 #include "main_utils.h"
 #include "math_utils.h"
 #include "calculator.h"
+#include "globals.h"
+
+// args
+int verbose = 0;
+
+// envs
+int sixseven = 0;
 
 
 int main(int argc, char **argv, char **envp) {
     // arguments and env vars
-    int verbose = 0;
-    
     char *env_sixseven = getenv("SIXSEVEN");
-    int sixseven = 0;
 
 
     // argument parsing
@@ -57,7 +61,8 @@ int main(int argc, char **argv, char **envp) {
     // variables
     char input[1000];
     char *oper;
-    Result r;
+    calcResult cRes;
+    opResult oRes;
 
     // now for the actual thingy!
     printf("C Calculator v%s\n", VERSION);
@@ -95,28 +100,28 @@ int main(int argc, char **argv, char **envp) {
         long double args[2];
         int nArgs;
         
-        opType type = parseExpr(input, &oper, args, &nArgs, verbose);
-        if (type == INVALID) { printf("Invalid!\n\n"); continue; }
+        oRes = parseExpr(input, &oper, args, &nArgs);
+        if (oRes.oper == INVALID) { printf("%s\n\n", oRes.msg); continue; }
 
-        Result r = compute(oper, args, nArgs);
-        if (sixseven) r.value = 67;
+        cRes = compute(oper, args);
+        if (sixseven) cRes.value = 67;
 
 
         // Validate result
-        if (!r.code) {
-            printf("Error: %s\n\n", r.msg);
+        if (!cRes.code) {
+            printf("Error: %s\n\n", cRes.msg);
             continue;
         }
 
         // check if result overflowed
-        if (!isfinite(r.value)) {
+        if (!isfinite(cRes.value)) {
             printf("Overflow error: calculation too large to compute\n\n");
             continue;
         }
 
         // Finally, results!s
         printf("%s%.*Lg\n\n",
-            verbose ? "Result: " : "", LDBL_DIG, r.value);
+            verbose ? "Result: " : "", LDBL_DIG, cRes.value);
         continue;
 
     }

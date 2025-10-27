@@ -5,15 +5,15 @@ typedef struct {
     int code;
     const char *msg;
     long double value;
-} Result;
+} calcResult;
 
-Result add(long double a, long double b);
-Result sub(long double a, long double b);
-Result multiply(long double a, long double b);
-Result divide(long double a, long double b);
+calcResult add(long double a, long double b);
+calcResult sub(long double a, long double b);
+calcResult multiply(long double a, long double b);
+calcResult divide(long double a, long double b);
 
-Result sine(long double num);
-Result cosine(long double num);
-Result tangent(long double num);
+calcResult sine(long double num);
+calcResult cosine(long double num);
+calcResult tangent(long double num);
 
 #endif
