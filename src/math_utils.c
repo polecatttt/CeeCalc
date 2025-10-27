@@ -19,7 +19,7 @@ Result divide(long double a, long double b) {
         return (Result){.code=0, .msg="Division by Zero", .value=0};
     }
 
-    return (Result){.code=1, .msg=NULL, .value=a+b};
+    return (Result){.code=1, .msg=NULL, .value=a/b};
 }
 
 Result sine(long double num) {
